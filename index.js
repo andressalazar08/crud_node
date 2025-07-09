@@ -17,18 +17,18 @@ const port=3000;
 
 //esto quedará en una base de datos
 let usuarios=[
-    {id:1, nombre:'Diana', email:"diana@email.com"},
-    {id:2, nombre:'Lina', email:"lina@email.com"},
-    {id:3, nombre:'Andres', email:"andres@email.com"}
+    {id:1, nombre:'Diana', email:"diana@email.com"}, //0
+    {id:2, nombre:'Lina', email:"lina@email.com"}, //1
+    {id:3, nombre:'Andres', email:"andres@email.com"} //2
 ]
 
 //ruta para obtener todos los usuario de la api
-app.get("/usuarios", (req,res)=>{
+app.get("/usuarios/todos", (req,res)=>{
     res.json(usuarios)
 })
 
 //ruta para obtener un usuario especifico
-app.get("/usuarios/:id",(req,res)=>{
+app.get("/usuarios/buscar/:id",(req,res)=>{
     const id=parseInt(req.params.id);
     console.log(typeof(id))
     const usuario=usuarios.find(user=>user.id===id)
@@ -44,7 +44,7 @@ app.get("/usuarios/:id",(req,res)=>{
 })
 
 //ruta para crear un nuevo usuario
-app.post("/usuarios", (req,res)=>{
+app.post("/usuarios/crear", (req,res)=>{
     const {nombre, email}=req.body; //desestructuring
     const nuevoUsuario={
         id:usuarios.length+1,
@@ -60,7 +60,7 @@ app.post("/usuarios", (req,res)=>{
 })
 
 //ruta para modificar o actualizar un usuario
-app.put("/usuarios/:id",(req, res)=>{
+app.put("/usuarios/modificar/:id",(req, res)=>{
     const id =parseInt(req.params.id);
     const {nuevoNombre}=req.body;
     const usuario=usuarios.find(user=> user.id===id);
@@ -72,10 +72,32 @@ app.put("/usuarios/:id",(req, res)=>{
         mensaje:`el usuario anterior era ${nombreActual}, el nuevo nombre es ${nuevoNombre} `,
         datos:usuario
     })
+});
 
-})
 
+//ruta para eliminar un usuario
+app.delete("/usuarios/eliminar/:id",(req,res)=>{
 
+    //obetener el id del usuario por params de la url
+    const id=parseInt(req.params.id);
+    //buscar en la lista de usuarios el id que corresponda y recuperamos el indice(posición)
+    //  array=[10,20,5,8]
+    //posicion 0  1  2 3
+    const indice = usuarios.findIndex(user=>user.id===id);
+    //console.log(indice)
+    //en caso de no encontrar el usuario a eliminar
+    if(indice===-1){
+        res.status(404).json({
+            mensaje:"usuario no encontrado"
+        })
+    }
+    //dado que es una lista, elimemos el usuario con el indice encontrado
+    usuarios.splice(indice,1)
+    res.status(201).json({
+        mensaje:`usuario ${id} eliminado correctamente`
+    })
+
+});
 
 
 
