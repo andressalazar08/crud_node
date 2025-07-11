@@ -2,13 +2,13 @@ const express=require('express'); //importar paquetes instalados con npm
 const app=express();//la variable guarda una instancia de un servidor de express
 require("dotenv").config();//cargamos .env
 const sequelize=require("./config/database");
-
+const UsuarioRoutes=require('./routes/UsuarioRoutes');
 
 const port=process.env.PORT//accedemos a la variable
 
 
 app.use(express.json())//esto permite pasar información por el body
-
+app.use("/", UsuarioRoutes);
 //promesa
 sequelize.sync().then(()=>{
     app.listen(port,()=>{
@@ -16,8 +16,7 @@ sequelize.sync().then(()=>{
     })
 }).catch((error)=>{
     console.log(`Error al conectarse a la BBDD ${error}`)
-})
-
+}); 
 
 
 
